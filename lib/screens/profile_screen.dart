@@ -72,24 +72,25 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildProfileTile(IconData icon, String title, {bool isDestructive = false}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
+      child: Material(
         color: const Color(0xFF1E293B),
         borderRadius: BorderRadius.circular(16),
-      ),
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: isDestructive ? const Color(0xFFEF4444) : const Color(0xFF818CF8),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: isDestructive ? const Color(0xFFEF4444) : Colors.white,
-            fontWeight: FontWeight.w600,
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          leading: Icon(
+            icon,
+            color: isDestructive ? const Color(0xFFEF4444) : const Color(0xFF818CF8),
           ),
+          title: Text(
+            title,
+            style: TextStyle(
+              color: isDestructive ? const Color(0xFFEF4444) : Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.white38),
+          onTap: () {},
         ),
-        trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.white38),
-        onTap: () {},
       ),
     );
   }

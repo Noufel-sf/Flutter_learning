@@ -5,6 +5,7 @@ import '../widgets/virtual_card.dart';
 import '../widgets/quick_actions.dart';
 import '../widgets/filter_chips.dart';
 import '../widgets/transaction_list.dart';
+import '../widgets/add_transaction_bottom_sheet.dart';
 import 'send_money_screen.dart';
 
 class WalletDashboardScreen extends StatefulWidget {
@@ -17,6 +18,7 @@ class WalletDashboardScreen extends StatefulWidget {
 class _WalletDashboardScreenState extends State<WalletDashboardScreen> {
   int _selectedFilterIndex = 0;
   bool _isBalanceVisible = true;
+  double _balance = 18450.80;
 
   final List<String> _filters = const [
     'All',
@@ -25,8 +27,9 @@ class _WalletDashboardScreenState extends State<WalletDashboardScreen> {
     'Subscriptions',
   ];
 
-  final List<TransactionItem> _allTransactions = const [
-    TransactionItem(
+  // Mutable list to dynamically append new transactions
+  final List<TransactionItem> _allTransactions = [
+    const TransactionItem(
       title: 'Dribbble Pro',
       category: 'Subscription',
       amount: 19.99,
@@ -35,7 +38,7 @@ class _WalletDashboardScreenState extends State<WalletDashboardScreen> {
       date: 'Today, 2:45 PM',
       isExpense: true,
     ),
-    TransactionItem(
+    const TransactionItem(
       title: 'Client Payment',
       category: 'Freelance Work',
       amount: 2450.00,
@@ -44,7 +47,7 @@ class _WalletDashboardScreenState extends State<WalletDashboardScreen> {
       date: 'Yesterday',
       isExpense: false,
     ),
-    TransactionItem(
+    const TransactionItem(
       title: 'Apple Store',
       category: 'Hardware',
       amount: 899.00,
@@ -53,7 +56,7 @@ class _WalletDashboardScreenState extends State<WalletDashboardScreen> {
       date: 'Sep 04',
       isExpense: true,
     ),
-    TransactionItem(
+    const TransactionItem(
       title: 'Starbucks Coffee',
       category: 'Food & Drinks',
       amount: 7.50,
@@ -73,9 +76,63 @@ class _WalletDashboardScreenState extends State<WalletDashboardScreen> {
     };
   }
 
+  // ==========================================================================
+  // 📝 MODAL BOTTOM SHEET TRIGGER & DYNAMIC STATE APPENDING
+  // ==========================================================================
+  Future<void> _openAddTransactionSheet() async {
+    final newTransaction = await showModalBottomSheet<TransactionItem>(
+      context: context,
+      isScrollControlled: true, // Allows sheet to expand with keyboard
+      backgroundColor: const Color(0xFF0F172A),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (context) => const AddTransactionBottomSheet(),
+    );
+
+    // If form was validated and submitted successfully
+    if (newTransaction != null) {
+      setState(() {
+        // 1. Insert new transaction at top of list
+        _allTransactions.insert(0, newTransaction);
+
+        // 2. Dynamically calculate new wallet balance
+        if (newTransaction.isExpense) {
+          _balance -= newTransaction.amount;
+        } else {
+          _balance += newTransaction.amount;
+        }
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Added "${newTransaction.title}" successfully!'),
+            backgroundColor: const Color(0xFF10B981),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _openAddTransactionSheet,
+        backgroundColor: const Color(0xFF6366F1),
+        foregroundColor: Colors.white,
+        elevation: 6,
+        icon: const Icon(Icons.add_rounded),
+        label: const Text(
+          'Add',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -93,7 +150,7 @@ class _WalletDashboardScreenState extends State<WalletDashboardScreen> {
 
               // 2. Virtual Card Component
               VirtualCard(
-                balance: 18450.80,
+                balance: _balance,
                 isBalanceVisible: _isBalanceVisible,
                 onToggleVisibility: () {
                   setState(() {
@@ -123,8 +180,8 @@ class _WalletDashboardScreenState extends State<WalletDashboardScreen> {
                     );
                   }
                 },
-                onReceive: () {},
-                onTopUp: () {},
+                onReceive: _openAddTransactionSheet,
+                onTopUp: _openAddTransactionSheet,
                 onMore: () {},
               ),
 
@@ -148,6 +205,9 @@ class _WalletDashboardScreenState extends State<WalletDashboardScreen> {
               TransactionList(
                 transactions: _filteredTransactions,
               ),
+
+              // Extra bottom padding for FloatingActionButton
+              const SizedBox(height: 80),
             ],
           ),
         ),
