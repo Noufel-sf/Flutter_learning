@@ -5,6 +5,7 @@ import '../widgets/virtual_card.dart';
 import '../widgets/quick_actions.dart';
 import '../widgets/filter_chips.dart';
 import '../widgets/transaction_list.dart';
+import 'send_money_screen.dart';
 
 class WalletDashboardScreen extends StatefulWidget {
   const WalletDashboardScreen({super.key});
@@ -105,7 +106,23 @@ class _WalletDashboardScreenState extends State<WalletDashboardScreen> {
 
               // 3. Quick Action Buttons Component
               QuickActions(
-                onSend: () {},
+                onSend: () async {
+                  final message = await Navigator.push<String>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SendMoneyScreen(),
+                    ),
+                  );
+                  if (message != null && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(message),
+                        backgroundColor: const Color(0xFF10B981),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  }
+                },
                 onReceive: () {},
                 onTopUp: () {},
                 onMore: () {},

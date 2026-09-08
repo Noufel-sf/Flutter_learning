@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/wallet_dashboard_screen.dart';
+import 'screens/main_navigation_shell.dart';
 
 void main() {
   runApp(const ApexWalletApp());
@@ -23,7 +23,7 @@ class ApexWalletApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: const Color(0xFF0F172A),
       ),
-      home: const WalletDashboardScreen(),
+      home: const MainNavigationShell(),
     );
   }
 }
