@@ -67,14 +67,21 @@ class TransactionList extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Container(
-                  width: 46,
-                  height: 46,
-                  decoration: BoxDecoration(
-                    color: item.iconBg.withValues(alpha: 0.18),
-                    borderRadius: BorderRadius.circular(12),
+                // ============================================================
+                // ✨ HERO ANIMATION (Origin Widget)
+                // Shared element flies smoothly to the detail screen on tap!
+                // ============================================================
+                Hero(
+                  tag: 'txn-icon-${item.title}-${item.date}',
+                  child: Container(
+                    width: 46,
+                    height: 46,
+                    decoration: BoxDecoration(
+                      color: item.iconBg.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(item.icon, color: item.iconBg, size: 24),
                   ),
-                  child: Icon(item.icon, color: item.iconBg, size: 24),
                 ),
                 const SizedBox(width: 14),
                 Expanded(

@@ -39,19 +39,28 @@ class TransactionDetailScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            // Centered Avatar / Icon
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: transaction.iconBg.withValues(alpha: 0.2),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: transaction.iconBg.withValues(alpha: 0.6),
-                  width: 2,
+            // ================================================================
+            // ✨ HERO ANIMATION (Destination Widget)
+            // Morphs smoothly from the small list tile into this large header!
+            // ================================================================
+            Hero(
+              tag: 'txn-icon-${transaction.title}-${transaction.date}',
+              child: Material(
+                type: MaterialType.transparency,
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: transaction.iconBg.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: transaction.iconBg.withValues(alpha: 0.6),
+                      width: 2,
+                    ),
+                  ),
+                  child: Icon(transaction.icon, color: transaction.iconBg, size: 40),
                 ),
               ),
-              child: Icon(transaction.icon, color: transaction.iconBg, size: 40),
             ),
             const SizedBox(height: 16),
             Text(
